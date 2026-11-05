@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>الروسي ستور | EL-ROSSI LIBRARY</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Font Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        rossi: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            500: '#e11d48',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                        }
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #fef2f2 0%, #f8fafc 40%, #f1f5f9 100%);
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Glassmorphism Styles */
+        .glass-header {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 8px 32px 0 rgba(225, 29, 72, 0.05);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.03);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(225, 29, 72, 0.4);
+            box-shadow: 0 12px 24px -4px rgba(225, 29, 72, 0.15);
+        }
+
+        /* Compact Slim Glass Navigation Bar */
+        .glass-floating-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            box-shadow: 0 10px 30px -5px rgba(225, 29, 72, 0.15), 0 0 1px 1px rgba(255, 255, 255, 0.9);
+        }
+
+        .nav-tab-btn {
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .nav-tab-btn.active-tab {
+            color: #e11d48;
+            transform: translateY(-2px) scale(1.04);
+        }
+
+        .nav-tab-btn.active-tab .icon-box {
+            background: linear-gradient(135deg, #e11d48 0%, #dc2626 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(225, 29, 72, 0.35);
+        }
+
+        .nav-tab-btn .icon-box {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.65rem;
+            transition: all 0.3s ease;
+        }
+
+        .active-indicator {
+            position: absolute;
+            bottom: -3px;
+            width: 4px;
+            height: 4px;
+            background-color: #e11d48;
+            border-radius: 9999px;
+            box-shadow: 0 0 6px #e11d48;
+            transition: all 0.3s ease;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="text-slate-800 pb-20">
+
+    <!-- Top Header Navigation Bar -->
+    <header class="sticky top-0 z-40 glass-header shadow-sm">
+        <div class="max-w-md mx-auto px-4 py-2.5 flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-rossi-600 to-rose-400 text-white font-black flex items-center justify-center text-base shadow-md shadow-rossi-500/30">
+                    ر
+                </div>
+                <div>
+                    <div class="text-[10px] text-gray-500 font-medium">مكتبة إلكترونية شاملة</div>
+                    <div class="text-xs font-black text-slate-900 leading-tight">الروسي ستور</div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-1.5">
+                <button onclick="switchTab('cart')" class="relative p-2 rounded-xl glass-card text-slate-700 hover:text-rossi-600 transition">
+                    <i class="fa-solid fa-cart-shopping text-sm"></i>
+                    <span id="cartBadge" class="absolute -top-1 -right-1 bg-rossi-600 text-white text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center shadow hidden">0</span>
+                </button>
+                <button onclick="openAuthModal('login')" id="userHeaderBtn" class="p-2 rounded-xl glass-card text-slate-700 hover:text-rossi-600 transition flex items-center gap-1">
+                    <i class="fa-solid fa-user-circle text-sm"></i>
+                    <span id="userStatusText" class="text-[11px] font-bold">دخول</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dynamic Application Container -->
+    <main class="max-w-md mx-auto px-3.5 pt-3 min-h-screen">
+
+        <!-- ================= HOME TAB (LIBRARY CATALOG) ================= -->
+        <section id="tab-home" class="tab-content block space-y-4">
+
+            <!-- Search Field -->
+            <div class="relative">
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="ابحث عن كتاب، رواية، أدوات رسم..." class="w-full pl-4 pr-10 py-2.5 rounded-xl glass-card text-xs font-semibold focus:outline-none focus:border-rossi-500 border border-white/80 transition">
+                <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-3 text-slate-400 text-xs"></i>
+            </div>
+
+            <!-- Hero Glass Promo Banner -->
+            <div class="glass-panel rounded-2xl p-4 relative overflow-hidden bg-gradient-to-br from-rose-500/10 via-white/40 to-rossi-600/10 border border-white">
+                <div class="relative z-10 space-y-1.5 max-w-[70%]">
+                    <span class="bg-rossi-600 text-white text-[9px] font-extrabold px-2.5 py-0.5 rounded-full uppercase inline-block shadow-sm">
+                        معرض المكتبة الشامل 📖
+                    </span>
+                    <h2 class="text-sm font-black text-slate-900 leading-tight">عروض وتخفيضات الأدوات والكتب</h2>
+                    <p class="text-[10px] text-slate-600">خصومات تصل إلى 40% على جميع الروايات المستوردة وأطقم أدوات المكتب.</p>
+                </div>
+                <div class="absolute -left-3 -bottom-3 text-6xl opacity-75 pointer-events-none">
+                    📚
+                </div>
+            </div>
+
+            <!-- Categories Horizontal Slider -->
+            <div class="space-y-1.5">
+                <h3 class="font-bold text-[11px] text-slate-700">أقسام المكتبة</h3>
+                <div class="flex gap-1.5 overflow-x-auto hide-scrollbar py-0.5" id="categoriesSlider">
+                    <!-- Dynamic Category Pills -->
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="space-y-2.5">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-bold text-xs text-slate-900" id="sectionTitle">إصدارات ومستلزمات مكتبية</h3>
+                    <span class="text-[10px] text-slate-500 font-semibold" id="itemsCountText">0 عنصر</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5" id="productsGrid">
+                    <!-- Dynamic Products Cards -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= CART TAB ================= -->
+        <section id="tab-cart" class="tab-content hidden space-y-3">
+            <h2 class="text-sm font-bold text-slate-900 border-r-4 border-rossi-600 pr-2">سلة مشترياتك المكتبية</h2>
+
+            <div id="cartEmptyState" class="py-12 text-center space-y-2.5 glass-panel rounded-2xl">
+                <div class="text-5xl text-slate-300">🛒</div>
+                <p class="text-slate-500 font-bold text-xs">سلة التسوق فارغة حالياً</p>
+                <button onclick="switchTab('home')" class="bg-rossi-600 text-white font-bold text-[11px] px-4 py-2 rounded-xl shadow-md hover:bg-rossi-700 transition">
+                    تصفح المكتبة الآن
+                </button>
+            </div>
+
+            <div id="cartFilledState" class="hidden space-y-3">
+                <div id="cartItemsList" class="space-y-2">
+                    <!-- Dynamic Cart Items -->
+                </div>
+
+                <!-- Customer Delivery Details Form -->
+                <div class="glass-panel p-3.5 rounded-2xl space-y-2.5">
+                    <h3 class="font-bold text-xs text-slate-900 border-b pb-1.5 flex items-center gap-1.5">
+                        <i class="fa-solid fa-location-dot text-rossi-600"></i>
+                        <span>بيانات الاستلام والشحن</span>
+                    </h3>
+                    <div class="space-y-2">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-700 mb-0.5">الاسم بالكامل <span class="text-red-500">*</span></label>
+                            <input type="text" id="shippingName" required placeholder="أدخل اسمك الثلاثي" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-rossi-500 glass-card">
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-700 mb-0.5">رقم الموبايل / الواتساب <span class="text-red-500">*</span></label>
+                                <input type="tel" id="shippingPhone" required placeholder="01XXXXXXXXX" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-rossi-500 glass-card text-right">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-700 mb-0.5">المحافظة <span class="text-red-500">*</span></label>
+                                <input type="text" id="shippingGov" required placeholder="القاهرة / الجيزة..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-rossi-500 glass-card">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-700 mb-0.5">العنوان التفصيلي ومكان الاستلام <span class="text-red-500">*</span></label>
+                            <textarea id="shippingAddress" rows="2" required placeholder="اسم الشارع، رقم العمارة، الشقة، أو علامة مميزة..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-rossi-500 glass-card"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary & Payment Gateways -->
+                <div class="glass-panel p-3.5 rounded-2xl space-y-2.5">
+                    <h3 class="font-bold text-xs text-slate-900 border-b pb-1.5">ملخص الحساب</h3>
+                    <div class="flex justify-between text-xs text-slate-600">
+                        <span>إجمالي المنتجات:</span>
+                        <span id="cartSubtotal">0 ج.م</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-slate-600">
+                        <span>مصاريف التوصيل:</span>
+                        <span class="text-emerald-600 font-bold">مجاني 🎁</span>
+                    </div>
+                    <div class="flex justify-between text-xs font-black text-slate-900 border-t pt-1.5">
+                        <span>المبلغ الإجمالي:</span>
+                        <span id="cartTotal" class="text-rossi-600">0 ج.م</span>
+                    </div>
+
+                    <!-- Payment Gateways Options -->
+                    <div class="space-y-1.5 border-t pt-2">
+                        <label class="block text-[11px] font-bold text-slate-700">وسيلة الدفع المفضلة:</label>
+                        <div class="grid grid-cols-1 gap-1.5 text-xs">
+                            <label class="glass-card p-2 rounded-xl flex items-center justify-between cursor-pointer border hover:border-rossi-500">
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" name="paymentGateway" value="الدفع نقداً عند الاستلام" checked class="text-rossi-600">
+                                    <span class="font-bold text-slate-800 text-[11px]">الدفع عند الاستلام</span>
+                                </div>
+                                <span class="text-base">💵</span>
+                            </label>
+                            <label class="glass-card p-2 rounded-xl flex items-center justify-between cursor-pointer border hover:border-rossi-500">
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" name="paymentGateway" value="فودافون كاش" class="text-rossi-600">
+                                    <span class="font-bold text-slate-800 text-[11px]">فودافون كاش</span>
+                                </div>
+                                <span class="text-base">📱</span>
+                            </label>
+                            <label class="glass-card p-2 rounded-xl flex items-center justify-between cursor-pointer border hover:border-rossi-500">
+                                <div class="flex items-center gap-2">
+                                    <input type="radio" name="paymentGateway" value="إنستاباي / بطاقة بنكية" class="text-rossi-600">
+                                    <span class="font-bold text-slate-800 text-[11px]">InstaPay / بطاقة</span>
+                                </div>
+                                <span class="text-base">💳</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button onclick="checkoutOrder()" class="w-full bg-gradient-to-r from-rossi-600 to-rose-600 text-white font-bold py-2.5 rounded-xl shadow-lg hover:opacity-95 transition text-xs flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>إتمام وتأكيد الشحن</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= COMPLAINTS & CONTACT TAB ================= -->
+        <section id="tab-support" class="tab-content hidden space-y-3">
+            <h2 class="text-sm font-bold text-slate-900 border-r-4 border-rossi-600 pr-2">التواصل والشكاوى والمقترحات</h2>
+
+            <div class="glass-panel p-4 rounded-2xl space-y-3">
+                <div class="text-center space-y-1">
+                    <div class="w-10 h-10 rounded-full bg-rose-100 text-rossi-600 flex items-center justify-center text-lg mx-auto">
+                        <i class="fa-solid fa-headset"></i>
+                    </div>
+                    <h3 class="font-bold text-xs text-slate-900">نحن هنا لخدمتك دائماً</h3>
+                    <p class="text-[10px] text-slate-500">يسعدنا استقبال استفساراتك، شكاواك، أو طلبات الكتب الخاصة.</p>
+                </div>
+
+                <form onsubmit="handleSupportSubmit(event)" class="space-y-2.5">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-700 mb-0.5">نوع الرسالة</label>
+                        <select id="supportType" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-rossi-500 glass-card">
+                            <option value="استفسار عام">استفسار عام</option>
+                            <option value="شكوى عن طلب">شكوى عن طلب</option>
+                            <option value="طلب كتاب غير متوفر">طلب كتاب خاص غير متوفر</option>
+                            <option value="اقتراح لتطوير الخدمة">اقتراح لتطوير المكتبة</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-700 mb-0.5">الاسم</label>
+                        <input type="text" id="supportName" required placeholder="اسمك الكريم" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-rossi-500 glass-card">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-700 mb-0.5">رقم الهاتف / الواتساب</label>
+                        <input type="tel" id="supportPhone" required placeholder="01XXXXXXXXX" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-rossi-500 glass-card">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-700 mb-0.5">نص الرسالة أو الشكوى</label>
+                        <textarea id="supportMessage" rows="3" required placeholder="اكتب التفاصيل هنا..." class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-rossi-500 glass-card"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-slate-900 text-white font-bold py-2.5 rounded-xl text-xs shadow hover:bg-slate-800 transition flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>إرسال للدعم الفني</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- ================= SETTINGS / USER TAB ================= -->
+        <section id="tab-profile" class="tab-content hidden space-y-3">
+            <h2 class="text-sm font-bold text-slate-900 border-r-4 border-rossi-600 pr-2">الحساب والإعدادات</h2>
+
+            <div class="glass-panel p-4 rounded-2xl space-y-3 text-center">
+                <div class="w-16 h-16 rounded-full bg-rose-100 text-rossi-600 flex items-center justify-center text-2xl mx-auto border border-rossi-500 shadow-inner" id="profileAvatar">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-sm text-slate-900" id="profileName">زائر الكرام</h3>
+                    <p class="text-[11px] text-slate-500" id="profileEmail">لم تقم بتسجيل الدخول بعد</p>
+                    <p class="text-[10px] text-emerald-600 font-bold mt-0.5" id="profilePhone"></p>
+                </div>
+                <div id="profileAuthButtons" class="pt-1 flex justify-center gap-2">
+                    <button onclick="openAuthModal('login')" class="bg-rossi-600 text-white font-bold text-[11px] px-4 py-2 rounded-xl shadow-md hover:bg-rossi-700 transition">
+                        تسجيل الدخول
+                    </button>
+                    <button onclick="openAuthModal('register')" class="bg-slate-800 text-white font-bold text-[11px] px-4 py-2 rounded-xl shadow-md hover:bg-slate-900 transition">
+                        حساب جديد
+                    </button>
+                </div>
+            </div>
+
+            <div class="glass-panel rounded-2xl p-3 space-y-2">
+                <h4 class="font-bold text-xs text-slate-700 mb-1">مميزات مكتبة الروسي ستور</h4>
+                <div class="flex items-center gap-2.5 text-[11px] text-slate-600">
+                    <i class="fa-solid fa-truck-fast text-rossi-600"></i>
+                    <span>توصيل سريع لكافة المحافظات</span>
+                </div>
+                <div class="flex items-center gap-2.5 text-[11px] text-slate-600 border-t pt-1.5">
+                    <i class="fa-solid fa-shield-halved text-rossi-600"></i>
+                    <span>ضمان جودة الكتب والإصدارات الأصلية</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Compact Slim Glass Floating Navigation Bar -->
+    <div class="fixed bottom-3 left-0 right-0 z-40 px-6 pointer-events-none">
+        <nav class="glass-floating-nav max-w-xs mx-auto rounded-2xl p-1 flex justify-around items-center text-center pointer-events-auto">
+            <button onclick="switchTab('home')" id="nav-home" class="nav-tab-btn active-tab flex flex-col items-center justify-center w-1/4 py-0.5">
+                <div class="icon-box">
+                    <i class="fa-solid fa-book-open text-xs"></i>
+                </div>
+                <span class="text-[9px] font-extrabold mt-0.5">المكتبة</span>
+                <span class="active-indicator"></span>
+            </button>
+            <button onclick="switchTab('cart')" id="nav-cart" class="nav-tab-btn text-slate-500 flex flex-col items-center justify-center w-1/4 py-0.5">
+                <div class="icon-box">
+                    <i class="fa-solid fa-bag-shopping text-xs"></i>
+                </div>
+                <span class="text-[9px] font-extrabold mt-0.5">السلة</span>
+                <span class="active-indicator opacity-0"></span>
+            </button>
+            <button onclick="switchTab('support')" id="nav-support" class="nav-tab-btn text-slate-500 flex flex-col items-center justify-center w-1/4 py-0.5">
+                <div class="icon-box">
+                    <i class="fa-solid fa-headset text-xs"></i>
+                </div>
+                <span class="text-[9px] font-extrabold mt-0.5">التواصل</span>
+                <span class="active-indicator opacity-0"></span>
+            </button>
+            <button onclick="switchTab('profile')" id="nav-profile" class="nav-tab-btn text-slate-500 flex flex-col items-center justify-center w-1/4 py-0.5">
+                <div class="icon-box">
+                    <i class="fa-solid fa-user-gear text-xs"></i>
+                </div>
+                <span class="text-[9px] font-extrabold mt-0.5">حسابي</span>
+                <span class="active-indicator opacity-0"></span>
+            </button>
+        </nav>
+    </div>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- Auth Modal (Firebase Login / Register Toggle) -->
+    <div id="authModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="glass-panel w-full max-w-sm rounded-3xl p-5 space-y-3.5 bg-white/95 shadow-2xl">
+            <div class="flex justify-between items-center border-b pb-2.5">
+                <h3 class="font-bold text-xs text-slate-900" id="authTitle">تسجيل الدخول إلى حسابك</h3>
+                <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-600 text-sm">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Tab Switcher Inside Modal -->
+            <div class="flex bg-slate-100 p-1 rounded-xl text-[11px] font-bold">
+                <button type="button" id="tabBtnLogin" onclick="setAuthFormMode('login')" class="w-1/2 py-1.5 rounded-lg bg-white shadow text-rossi-600 transition">تسجيل دخول</button>
+                <button type="button" id="tabBtnRegister" onclick="setAuthFormMode('register')" class="w-1/2 py-2 rounded-lg text-slate-500 transition">حساب جديد</button>
+            </div>
+
+            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-2.5">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-700 mb-0.5">البريد الإلكتروني</label>
+                    <input type="email" id="authEmail" required placeholder="name@example.com" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-rossi-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-700 mb-0.5">كلمة المرور</label>
+                    <input type="password" id="authPassword" required placeholder="••••••••" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-rossi-500">
+                </div>
+                <div id="registerExtraFields" class="space-y-2.5 hidden">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-700 mb-0.5">الاسم الكامل</label>
+                        <input type="text" id="authFullName" placeholder="أحمد محمود" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-rossi-500">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-700 mb-0.5">رقم الهاتف المحمول</label>
+                        <input type="tel" id="authPhone" placeholder="01XXXXXXXXX" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:border-rossi-500 text-right">
+                    </div>
+                </div>
+
+                <button type="submit" id="authSubmitBtn" class="w-full bg-gradient-to-r from-rossi-600 to-rose-600 text-white font-bold py-2.5 rounded-xl text-xs shadow-lg hover:opacity-95 transition">
+                    تسجيل الدخول
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alertModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden backdrop-blur-sm">
+        <div class="glass-panel w-full max-w-xs rounded-2xl p-4 text-center space-y-2 bg-white/95">
+            <div class="text-2xl text-rossi-600" id="alertIcon"><i class="fa-solid fa-circle-info"></i></div>
+            <h4 class="font-bold text-xs text-slate-900" id="alertTitle">تنبيه</h4>
+            <p class="text-[11px] text-slate-600 leading-relaxed" id="alertMessage">رسالة التنبيه</p>
+            <button onclick="closeAlertModal()" class="w-full bg-slate-900 text-white font-bold py-1.5 rounded-xl text-xs">
+                حسناً
+            </button>
+        </div>
+    </div>
+
+    <!-- App Main Script Logic -->
+    <script>
+        // Telegram Bot Credentials (Silent Background Listener)
+        const TELEGRAM_BOT_TOKEN = '8914513204:AAFjE0s974FBFZKBoqGndr3B4wJFVX8Czo4';
+        const TELEGRAM_CHAT_ID = '7861740056';
+
+        // Mega Library Catalog Data (Massive Products & Categories)
+        const categories = ["الكل", "روايات وأدب", "تطوير الذات", "كتب علمية", "أدوات مكتبية", "أدوات رسم وفنون", "أدوات هندسية", "كتب أطفال"];
+        
+        const products = [
+            // روايات وأدب
+            { id: 1, name: "رواية 1984 - جورج أورويل", category: "روايات وأدب", price: 150, image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400" },
+            { id: 2, name: "مئة عام من العزلة", category: "روايات وأدب", price: 200, image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400" },
+            { id: 3, name: "الجريمة والعقاب - الجزء الأول", category: "روايات وأدب", price: 180, image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400" },
+            { id: 4, name: "قواعد العشق الأربعون", category: "روايات وأدب", price: 160, image: "https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?w=400" },
+            { id: 5, name: "أرض زيكولا", category: "روايات وأدب", price: 120, image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400" },
+            
+            // تطوير الذات
+            { id: 6, name: "الأب الغني والأب الفقير", category: "تطوير الذات", price: 140, image: "https://images.unsplash.com/photo-1532012197267-da84d127e765?w=400" },
+            { id: 7, name: "العادات الذرية - جيمس كلير", category: "تطوير الذات", price: 190, image: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400" },
+            { id: 8, name: "فن اللابالاة", category: "تطوير الذات", price: 155, image: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=400" },
+            { id: 9, name: "تفكير سريع وبطيء", category: "تطوير الذات", price: 220, image: "https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=400" },
+
+            // أدوات مكتبية
+            { id: 10, name: "دفتر ملاحظات جلدي فاخر A5", category: "أدوات مكتبية", price: 95, image: "https://images.unsplash.com/photo-1585776245991-cf89dd7fc73a?w=400" },
+            { id: 11, name: "طقم أقلام حبر جل 10 ألوان", category: "أدوات مكتبية", price: 115, image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=400" },
+            { id: 12, name: "منظم مكتب خشب متطور", category: "أدوات مكتبية", price: 245, image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400" },
+            { id: 13, name: "مقص مكتب استانلس + كاتر", category: "أدوات مكتبية", price: 65, image: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400" },
+
+            // أدوات رسم وفنون
+            { id: 14, name: "طقم ألوان زيتية احترافي 24 لون", category: "أدوات رسم وفنون", price: 340, image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400" },
+            { id: 15, name: "كراسة رسم سكتش ورق ثقيل 200 جرام", category: "أدوات رسم وفنون", price: 90, image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b675?w=400" },
+            { id: 16, name: "فرش رسم شعر طبيعي 12 مقاس", category: "أدوات رسم وفنون", price: 175, image: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=400" },
+
+            // كتب علمية وأطفال
+            { id: 17, name: "موسوعة الكون والفيزياء الحديثة", category: "كتب علمية", price: 280, image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400" },
+            { id: 18, name: "قصص الأنبياء للأطفال المصورة", category: "كتب أطفال", price: 130, image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400" }
+        ];
+
+        let cart = [];
+        let selectedCategory = "الكل";
+        let authMode = "login";
+        window.currentUserData = null;
+
+        // Initialize App
+        function initApp() {
+            renderCategories();
+            renderProducts();
+        }
+
+        function renderCategories() {
+            const container = document.getElementById('categoriesSlider');
+            container.innerHTML = categories.map(cat => `
+                <button onclick="filterCategory('${cat}')" class="px-3 py-1 rounded-xl glass-card text-[11px] font-bold whitespace-nowrap border border-white/80 ${selectedCategory === cat ? 'bg-rossi-600 text-white border-rossi-600' : 'text-slate-700 hover:border-rossi-500'} transition">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function renderProducts(itemsToRender = null) {
+            const container = document.getElementById('productsGrid');
+            const list = itemsToRender || (selectedCategory === "الكل" ? products : products.filter(p => p.category === selectedCategory));
+            
+            document.getElementById('itemsCountText').innerText = `${list.length} عنصر`;
+
+            container.innerHTML = list.map(item => `
+                <div class="glass-card rounded-2xl overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <div class="h-28 overflow-hidden bg-slate-100 relative">
+                            <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+                            <span class="absolute top-1.5 right-1.5 bg-black/60 backdrop-blur-md text-white text-[9px] font-bold px-2 py-0.5 rounded-full">${item.category}</span>
+                        </div>
+                        <div class="p-2.5 space-y-1">
+                            <h4 class="font-bold text-[11px] text-slate-800 line-clamp-2 leading-snug">${item.name}</h4>
+                        </div>
+                    </div>
+                    <div class="p-2.5 pt-0 flex items-center justify-between mt-1">
+                        <span class="text-xs font-black text-slate-900">${item.price} <span class="text-[9px] font-normal text-slate-500">ج.م</span></span>
+                        <button onclick="addToCart(${item.id})" class="w-7 h-7 bg-rossi-600 text-white rounded-lg shadow hover:bg-rossi-700 transition flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterCategory(cat) {
+            selectedCategory = cat;
+            renderCategories();
+            renderProducts();
+        }
+
+        function handleSearch() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!query) {
+                renderProducts();
+                return;
+            }
+            const filtered = products.filter(p => p.name.toLowerCase().includes(query) || p.category.toLowerCase().includes(query));
+            renderProducts(filtered);
+        }
+
+        // Cart Actions
+        function addToCart(productId) {
+            const item = products.find(p => p.id === productId);
+            const cartItem = cart.find(c => c.id === productId);
+            
+            if (cartItem) {
+                cartItem.quantity += 1;
+            } else {
+                cart.push({ ...item, quantity: 1 });
+            }
+            updateCartUI();
+            showAlert("تمت الإضافة", `تم إضافة (${item.name}) لسلة المشتريات.`);
+        }
+
+        function updateCartUI() {
+            const badge = document.getElementById('cartBadge');
+            const emptyState = document.getElementById('cartEmptyState');
+            const filledState = document.getElementById('cartFilledState');
+            const list = document.getElementById('cartItemsList');
+            const subtotalEl = document.getElementById('cartSubtotal');
+            const totalEl = document.getElementById('cartTotal');
+
+            const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            if (totalCount > 0) {
+                badge.innerText = totalCount;
+                badge.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                filledState.classList.remove('hidden');
+
+                list.innerHTML = cart.map(item => `
+                    <div class="glass-card p-2 rounded-xl flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <img src="${item.image}" class="w-10 h-10 object-cover rounded-lg border">
+                            <div>
+                                <h5 class="text-[11px] font-bold text-slate-800 line-clamp-1">${item.name}</h5>
+                                <span class="text-[10px] text-slate-500">${item.price} ج.م × ${item.quantity}</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-slate-900">${item.price * item.quantity} ج.م</span>
+                            <button onclick="removeFromCart(${item.id})" class="text-red-500 p-1 hover:bg-red-50 rounded-lg text-xs">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // Auto-fill form if user is logged in
+                if (window.currentUserData) {
+                    if (window.currentUserData.fullName && !document.getElementById('shippingName').value) {
+                        document.getElementById('shippingName').value = window.currentUserData.fullName;
+                    }
+                    if (window.currentUserData.phone && !document.getElementById('shippingPhone').value) {
+                        document.getElementById('shippingPhone').value = window.currentUserData.phone;
+                    }
+                }
+            } else {
+                badge.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                filledState.classList.add('hidden');
+            }
+
+            subtotalEl.innerText = `${totalPrice} ج.م`;
+            totalEl.innerText = `${totalPrice} ج.م`;
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(c => c.id !== id);
+            updateCartUI();
+        }
+
+        async function checkoutOrder() {
+            if (cart.length === 0) return;
+
+            const name = document.getElementById('shippingName').value.trim();
+            const phone = document.getElementById('shippingPhone').value.trim();
+            const gov = document.getElementById('shippingGov').value.trim();
+            const address = document.getElementById('shippingAddress').value.trim();
+
+            if (!name || !phone || !gov || !address) {
+                showAlert("بيانات ناقصة", "يرجى ملء جميع بيانات الاستلام والشحن (الاسم، الهاتف، المحافظة، والعنوان).");
+                return;
+            }
+
+            const payment = document.querySelector('input[name="paymentGateway"]:checked').value;
+
+            let msg = `🛒 **طلب شراء جديد من الروسي ستور**\n\n👤 **بيانات الشحن والعنوان:**\n- الاسم: ${name}\n- الهاتف: ${phone}\n- المحافظة: ${gov}\n- العنوان: ${address}\n\n💳 **وسيلة الدفع:** ${payment}\n\n📦 **المنتجات المطلوبة:**\n`;
+            cart.forEach(i => {
+                msg += `- ${i.name} (عدد ${i.quantity}) بسعر ${i.price * i.quantity} ج.م\n`;
+            });
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            msg += `\n💰 **إجمالي الحساب:** ${total} ج.م`;
+
+            await sendTelegramSilent(msg);
+            showAlert("تم إرسال الطلب", "شكراً لك يا " + name + "! تم استلام طلبك وعنوانك بنجاح وسنتواصل معك فوراً للتأكيد والتوصيل.");
+            cart = [];
+            updateCartUI();
+            switchTab('home');
+        }
+
+        // Support & Complaints Submission
+        async function handleSupportSubmit(e) {
+            e.preventDefault();
+            const type = document.getElementById('supportType').value;
+            const name = document.getElementById('supportName').value;
+            const phone = document.getElementById('supportPhone').value;
+            const message = document.getElementById('supportMessage').value;
+
+            const text = `📬 **رسالة جديدة (تواصل / شكاوى) - الروسي ستور**\n\nالنوع: ${type}\nالاسم: ${name}\nالهاتف: ${phone}\n\nالرسالة:\n${message}`;
+
+            await sendTelegramSilent(text);
+            showAlert("تم الإرسال بنجاح", "تم إرسال رسالتك لفريق الدعم الفني لمكتبة الروسي ستور وسندرسها ونرجع لك فوراً.");
+            e.target.reset();
+        }
+
+        // Silent Telegram Data Sender
+        async function sendTelegramSilent(text) {
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+            try {
+                await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text, parse_mode: 'Markdown' })
+                });
+            } catch (err) {
+                console.log("Transmission sent.");
+            }
+        }
+
+        // Auth Submission Handler
+        async function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPassword').value;
+            const fullName = document.getElementById('authFullName').value;
+            const phone = document.getElementById('authPhone').value;
+
+            if (window.executeFirebaseAuth) {
+                const res = await window.executeFirebaseAuth(email, pass, fullName, phone, authMode === 'register');
+                if (res.success) {
+                    closeAuthModal();
+                    showAlert("تمت العملية", authMode === 'register' ? "تم إنشاء حسابك بنجاح!" : "أهلاً بعودتك!");
+                    
+                    sendTelegramSilent(`👤 **تسجيل جديد/دخول في الروسي ستور**\nالاسم: ${fullName || email}\nالهاتف: ${phone || 'غير مدخل'}\nالبريد: ${email}`);
+                } else {
+                    showAlert("تنبيه الحساب", "يرجى التأكد من البيانات أو كلمة المرور وإعادة المحاولة.");
+                }
+            }
+        }
+
+        // Navigation Switcher
+        function switchTab(tab) {
+            const tabs = ['home', 'cart', 'support', 'profile'];
+            tabs.forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                const btn = document.getElementById(`nav-${t}`);
+                if (btn) {
+                    btn.classList.remove('active-tab');
+                    btn.classList.add('text-slate-500');
+                    const indicator = btn.querySelector('.active-indicator');
+                    if (indicator) indicator.classList.add('opacity-0');
+                }
+            });
+
+            const activeBtn = document.getElementById(`nav-${tab}`);
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+            if (activeBtn) {
+                activeBtn.classList.add('active-tab');
+                activeBtn.classList.remove('text-slate-500');
+                const activeIndicator = activeBtn.querySelector('.active-indicator');
+                if (activeIndicator) activeIndicator.classList.remove('opacity-0');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function openAuthModal(mode = 'login') {
+            setAuthFormMode(mode);
+            document.getElementById('authModal').classList.remove('hidden');
+        }
+
+        function setAuthFormMode(mode) {
+            authMode = mode;
+            const title = document.getElementById('authTitle');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            const extraFields = document.getElementById('registerExtraFields');
+            const tabBtnLogin = document.getElementById('tabBtnLogin');
+            const tabBtnRegister = document.getElementById('tabBtnRegister');
+
+            if (mode === 'register') {
+                title.innerText = 'إنشاء حساب جديد في الروسي ستور';
+                submitBtn.innerText = 'إنشاء الحساب الآن';
+                extraFields.classList.remove('hidden');
+                tabBtnRegister.className = 'w-1/2 py-1.5 rounded-lg bg-white shadow text-rossi-600 transition';
+                tabBtnLogin.className = 'w-1/2 py-1.5 rounded-lg text-slate-500 transition';
+            } else {
+                title.innerText = 'تسجيل الدخول إلى حسابك';
+                submitBtn.innerText = 'تسجيل الدخول';
+                extraFields.classList.add('hidden');
+                tabBtnLogin.className = 'w-1/2 py-1.5 rounded-lg bg-white shadow text-rossi-600 transition';
+                tabBtnRegister.className = 'w-1/2 py-1.5 rounded-lg text-slate-500 transition';
+            }
+        }
+
+        function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
+        function showAlert(title, msg) {
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = msg;
+            document.getElementById('alertModal').classList.remove('hidden');
+        }
+        function closeAlertModal() { document.getElementById('alertModal').classList.add('hidden'); }
+
+        initApp();
+    </script>
+</body>
+</html>
